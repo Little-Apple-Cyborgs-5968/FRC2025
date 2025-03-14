@@ -153,6 +153,20 @@ public class RobotContainer {
         NamedCommands.registerCommand("DealgFlopOut", dealgaefier.FlopOut().withTimeout(Constants.Auto.kDealgFlopInOutTime));
         NamedCommands.registerCommand("DealgFlopIn", dealgaefier.FlopIn().withTimeout(Constants.Auto.kDealgFlopInOutTime));
 
+        NamedCommands.registerCommand("2PdriveForward" ,drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)).withTimeout(1));
+        NamedCommands.registerCommand("2PgoToL4" ,elevator.goToElevatorL4().withTimeout(1.3));
+        NamedCommands.registerCommand("2PRIGHTlimelightAlign" ,limelight.LimelightAlign(drivetrain,false).withTimeout(1.2));
+        NamedCommands.registerCommand("2PgoToL1" ,elevator.goToElevatorStow().withTimeout(1.3));
+        NamedCommands.registerCommand("2PspitCoral" ,coral.IntakeAutoSpeed().withTimeout(.5));
+
+        NamedCommands.registerCommand("2PsetHeading4",drivetrain.applyRequest(() -> 
+                headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
+                .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
+                .withTargetDirection(new Rotation2d(Math.PI)))
+            .withTimeout(.2)
+        );
+  
+
         //reef heading named commands
         NamedCommands.registerCommand("setHeading3  ",drivetrain.applyRequest(() -> 
                 headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
@@ -229,7 +243,7 @@ public class RobotContainer {
         driveJoystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         //auto gyro heading PID syom
-        headingRequest.HeadingController.setP(7.0);
+        headingRequest.HeadingController.setP(3);
         headingRequest.HeadingController.setI(0.0001);
         headingRequest.HeadingController.setD(1.2);
 
@@ -318,11 +332,11 @@ public class RobotContainer {
 
 
         // Limelight alignment
-        driveJoystick.leftBumper().onTrue(limelight.setYaw(drivetrain.getPigeon2().getYaw().getValueAsDouble()));
+        //driveJoystick.leftBumper().onTrue(limelight.setYaw(drivetrain.getPigeon2().getYaw().getValueAsDouble()));
         driveJoystick.leftBumper().whileTrue(limelight.LimelightAlign(drivetrain, true));
 
         //align to right reef branch
-        driveJoystick.rightBumper().onTrue(limelight.setYaw(drivetrain.getPigeon2().getYaw().getValueAsDouble()));
+        //driveJoystick.rightBumper().onTrue(limelight.setYaw(drivetrain.getPigeon2().getYaw().getValueAsDouble()));
         driveJoystick.rightBumper().whileTrue(limelight.LimelightAlign(drivetrain, false));
 
 
@@ -397,8 +411,8 @@ public class RobotContainer {
         operatorJoystick.start().onTrue(drivetrain.runOnce(() -> {roboOrientedInverter *=-1;}));
 
         //opp can also limelight allign
-        operatorJoystick.leftBumper().whileTrue(limelight.LimelightAlign(drivetrain, true));
-        operatorJoystick.rightBumper().whileTrue(limelight.LimelightAlign(drivetrain, false));
+        // operatorJoystick.leftBumper().whileTrue(limelight.LimelightAlign(drivetrain, true));
+        // operatorJoystick.rightBumper().whileTrue(limelight.LimelightAlign(drivetrain, false));
 
 
 

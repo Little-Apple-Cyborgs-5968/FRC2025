@@ -13,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "RIGHTlimelightAlign"
+            "name": "2PRIGHTlimelightAlign"
           }
         },
         {
@@ -23,13 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "goToL4"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "setHeading3"
+                  "name": "2PgoToL4"
                 }
               }
             ]
@@ -91,7 +85,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "goToL4"
+                  "name": "2PgoToL4"
                 }
               },
               {
