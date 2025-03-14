@@ -6,6 +6,14 @@ package frc.robot;
 
 /** Add your docs here. */
 public class Constants {
+
+  //misclinaious constants
+  public static class Misc {
+    public static final double kSlewRateLimit = 3;
+    public static final double kYawSlewRateLimit = 0.1;
+  }
+
+
     public static class Robot{
         public static final double k_width = 26; // Inches
         public static final double k_length = 28; // Inches
