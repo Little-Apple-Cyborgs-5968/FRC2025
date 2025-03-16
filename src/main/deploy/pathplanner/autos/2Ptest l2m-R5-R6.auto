@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2P RWL-R3"
+            "pathName": "2P l2m-R5"
           }
         },
         {
@@ -67,7 +67,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "2P R3-rH"
+                  "pathName": "2P R5-lH"
                 }
               }
             ]
@@ -82,7 +82,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2P rH-R2"
+            "pathName": "2P lH-R6"
           }
         },
         {
