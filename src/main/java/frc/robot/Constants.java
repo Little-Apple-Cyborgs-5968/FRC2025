@@ -19,8 +19,27 @@ public class Constants {
         public static final double k_length = 28; // Inches
     }
 
+    public static class Auto{
+      public static final double kCoralSpinTime = 2.5; // time in seocnds each command will run for
+      public static final double kElevatorTime = .7;
+      public static final double kLimelightAllignTime = 2;
+      public static final double kDriveForwardTime = 1.2;
+      public static final double kDriveBackwardTime = .75;
+      public static final double kSetHeadingTime =  2;
+      public static final double kDealgFlopInOutTime = .1;
 
-public static class Elevator {
+
+      // 2 piece auto schizo ass timings, needa tune.
+      public static final double k2PCoralSpinTime = .8; // time in seocnds each command will run for
+      public static final double k2PElevatorTime = 1.5;
+      public static final double k2PLimelightAllignTime = .7;
+      public static final double k2PDriveForwardTime = .5;
+      public static final double k2PDriveBackwardTime = .75;
+      public static final double k2PSetHeadingTime =  .3;
+        }
+
+
+    public static class Elevator {
     public static final int kElevatorLeftMotorId = 1;
     public static final int kElevatorRightMotorId = 2;
 
@@ -150,16 +169,6 @@ public static class Elevator {
     public static final double kYofset = 0.4;
     public static final double kLeftoffset = .19;
     public static final double kRightoffset = -.192;
-  }
-
-  public static class Auto{
-    public static final double kCoralSpinTime = 2.5; // time in seocnds each command will run for
-    public static final double kElevatorTime = .7;
-    public static final double kLimelightAllignTime = 2;
-    public static final double kDriveForwardTime = 1.2;
-    public static final double kDriveBackwardTime = .75;
-    public static final double kSetHeadingTime =  2;
-    public static final double kDealgFlopInOutTime = .1;
   }
 
 }

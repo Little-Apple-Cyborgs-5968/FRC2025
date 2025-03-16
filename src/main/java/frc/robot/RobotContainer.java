@@ -152,23 +152,10 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("DealgFlopOut", dealgaefier.FlopOut().withTimeout(Constants.Auto.kDealgFlopInOutTime));
         NamedCommands.registerCommand("DealgFlopIn", dealgaefier.FlopIn().withTimeout(Constants.Auto.kDealgFlopInOutTime));
-
-        NamedCommands.registerCommand("2PdriveForward" ,drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)).withTimeout(1));
-        NamedCommands.registerCommand("2PgoToL4" ,elevator.goToElevatorL4().withTimeout(1.3));
-        NamedCommands.registerCommand("2PRIGHTlimelightAlign" ,limelight.LimelightAlign(drivetrain,false).withTimeout(1.2));
-        NamedCommands.registerCommand("2PgoToL1" ,elevator.goToElevatorStow().withTimeout(1.3));
-        NamedCommands.registerCommand("2PspitCoral" ,coral.IntakeAutoSpeed().withTimeout(.5));
-
-        NamedCommands.registerCommand("2PsetHeading4",drivetrain.applyRequest(() -> 
-                headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
-                .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
-                .withTargetDirection(new Rotation2d(Math.PI)))
-            .withTimeout(.2)
-        );
   
 
         //reef heading named commands
-        NamedCommands.registerCommand("setHeading3  ",drivetrain.applyRequest(() -> 
+        NamedCommands.registerCommand("setHeading3",drivetrain.applyRequest(() -> 
                 headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
                 .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
                 .withTargetDirection(new Rotation2d(2 * Math.PI / 3)))
@@ -186,6 +173,47 @@ public class RobotContainer {
                 .withTargetDirection(new Rotation2d(4 * Math.PI / 3)))
             .withTimeout(Constants.Auto.kSetHeadingTime)
         );
+
+
+
+        //2 piece auto schizophreinc timings
+        NamedCommands.registerCommand("2PdriveForward" ,drivetrain.applyRequest(() -> forwardStraight.withVelocityX(1).withVelocityY(0)).withTimeout(Constants.Auto.k2PDriveForwardTime));
+        NamedCommands.registerCommand("2PgoToL4" ,elevator.goToElevatorL4().withTimeout(Constants.Auto.k2PElevatorTime));
+        NamedCommands.registerCommand("2PRIGHTlimelightAlign" ,limelight.LimelightAlign(drivetrain,false).withTimeout(Constants.Auto.k2PLimelightAllignTime));
+        NamedCommands.registerCommand("2PgoToL1" ,elevator.goToElevatorStow().withTimeout(Constants.Auto.k2PElevatorTime));
+        NamedCommands.registerCommand("2PspitCoral" ,coral.IntakeAutoSpeed().withTimeout(Constants.Auto.k2PCoralSpinTime));
+        
+        NamedCommands.registerCommand("2PsetHeading2",drivetrain.applyRequest(() -> 
+            headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
+            .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
+            .withTargetDirection(new Rotation2d(Math.PI / 3)))
+            .withTimeout(Constants.Auto.k2PSetHeadingTime)
+        );
+        NamedCommands.registerCommand("2PsetHeading3",drivetrain.applyRequest(() -> 
+            headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
+            .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
+            .withTargetDirection(new Rotation2d(2 * Math.PI / 3)))  
+            .withTimeout(Constants.Auto.k2PSetHeadingTime)
+        );
+        NamedCommands.registerCommand("2PsetHeading4",drivetrain.applyRequest(() -> 
+            headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
+            .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
+            .withTargetDirection(new Rotation2d(Math.PI)))
+            .withTimeout(Constants.Auto.k2PSetHeadingTime)
+        );
+        NamedCommands.registerCommand("2PsetHeading5",drivetrain.applyRequest(() -> 
+            headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
+            .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
+            .withTargetDirection(new Rotation2d(4 * Math.PI / 3)))
+            .withTimeout(Constants.Auto.k2PSetHeadingTime)
+        );
+        NamedCommands.registerCommand("2PsetHeading6",drivetrain.applyRequest(() -> 
+            headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
+            .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
+            .withTargetDirection(new Rotation2d(5 * Math.PI / 3)))
+            .withTimeout(Constants.Auto.k2PSetHeadingTime)
+        );
+
 
  
 

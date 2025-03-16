@@ -11,12 +11,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "2PRIGHTlimelightAlign"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -25,6 +19,31 @@
                 "data": {
                   "name": "2PgoToL4"
                 }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "2PRIGHTlimelightAlign"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "2PsetHeading3"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "2PdriveForward"
+                      }
+                    }
+                  ]
+                }
               }
             ]
           }
@@ -32,13 +51,7 @@
         {
           "type": "named",
           "data": {
-            "name": "driveForward"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "spitCoral"
+            "name": "2PspitCoral"
           }
         },
         {
@@ -48,7 +61,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "goToL1"
+                  "name": "2PgoToL1"
                 }
               },
               {
@@ -63,19 +76,13 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 1.5
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "2P rH-R2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "RIGHTlimelightAlign"
           }
         },
         {
@@ -89,9 +96,28 @@
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "setHeading3"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "2PRIGHTlimelightAlign"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "2PsetHeading2"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "2PdriveForward"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -100,13 +126,7 @@
         {
           "type": "named",
           "data": {
-            "name": "driveForward"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "spitCoral"
+            "name": "2PspitCoral"
           }
         }
       ]
