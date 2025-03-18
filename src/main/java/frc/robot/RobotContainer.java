@@ -134,9 +134,17 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-        
 
-//path planner named commands
+        registerPathPlannerNamedCommands();
+
+        autoChooser = AutoBuilder.buildAutoChooser("Tests");
+        SmartDashboard.putData("Auto Mode", autoChooser);
+        configureBindings();
+    }
+    
+
+    private void registerPathPlannerNamedCommands(){
+        //path planner named commands
         NamedCommands.registerCommand("LEFTlimelightAlign" ,limelight.LimelightAlign(drivetrain, true).withTimeout(Constants.Auto.kLimelightAllignTime));
         NamedCommands.registerCommand("RIGHTlimelightAlign" ,limelight.LimelightAlign(drivetrain,false).withTimeout(Constants.Auto.kLimelightAllignTime));
 
@@ -152,6 +160,8 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("DealgFlopOut", dealgaefier.FlopOut().withTimeout(Constants.Auto.kDealgFlopInOutTime));
         NamedCommands.registerCommand("DealgFlopIn", dealgaefier.FlopIn().withTimeout(Constants.Auto.kDealgFlopInOutTime));
+
+        NamedCommands.registerCommand("stopCoral", coral.stopIntake().withTimeout(.001));
   
 
         //reef heading named commands
@@ -214,12 +224,6 @@ public class RobotContainer {
             .withTimeout(Constants.Auto.k2PSetHeadingTime)
         );
 
-
- 
-
-        autoChooser = AutoBuilder.buildAutoChooser("Tests");
-        SmartDashboard.putData("Auto Mode", autoChooser);
-        configureBindings();
     }
     
     private void configureBindings() {
