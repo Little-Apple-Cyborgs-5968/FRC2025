@@ -161,7 +161,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("DealgFlopOut", dealgaefier.FlopOut().withTimeout(Constants.Auto.kDealgFlopInOutTime));
         NamedCommands.registerCommand("DealgFlopIn", dealgaefier.FlopIn().withTimeout(Constants.Auto.kDealgFlopInOutTime));
 
-        NamedCommands.registerCommand("stopCoral", coral.stopIntake().withTimeout(.001));
+        NamedCommands.registerCommand("stopCoral", coral.stopIntake().withTimeout(Constants.Auto.kCoralStopTime));
   
 
         //reef heading named commands

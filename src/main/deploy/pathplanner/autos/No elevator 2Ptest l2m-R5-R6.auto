@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2P r2m-R3"
+            "pathName": "2P l2m-R5"
           }
         },
         {
@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "2PgoToL4"
+                  "name": "2PgoToL1"
                 }
               },
               {
@@ -33,7 +33,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "2PsetHeading3"
+                        "name": "2PsetHeading5"
                       }
                     },
                     {
@@ -67,22 +67,48 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "2P R3-rH"
+                  "pathName": "2P R5-lH"
                 }
               }
             ]
           }
         },
         {
-          "type": "wait",
+          "type": "parallel",
           "data": {
-            "waitTime": 1.5
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.5
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.2
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stopCoal"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "2P rH-R2"
+            "pathName": "2P lH-R6"
           }
         },
         {
@@ -92,7 +118,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "2PgoToL4"
+                  "name": "2PgoToL1"
                 }
               },
               {
@@ -108,7 +134,7 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "2PsetHeading2"
+                        "name": "2PsetHeading6"
                       }
                     },
                     {

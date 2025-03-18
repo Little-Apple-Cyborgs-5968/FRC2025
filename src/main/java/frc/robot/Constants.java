@@ -36,6 +36,9 @@ public class Constants {
       public static final double k2PDriveForwardTime = .5;
       public static final double k2PDriveBackwardTime = .75;
       public static final double k2PSetHeadingTime =  .3;
+
+      // coral commands change spin state , to go back to no spin  u have to run stop command.
+      public static final double kCoralStopTime = 0.001;
         }
 
 
