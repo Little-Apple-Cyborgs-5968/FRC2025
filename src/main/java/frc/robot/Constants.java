@@ -170,8 +170,8 @@ public class Constants {
     // public static final double kXofset = .171;
     //robot centric forward backward offset (meters), bassically how far away from the tag you want to be after ur allign.
     public static final double kYofset = 0.4;
-    public static final double kLeftoffset = .19;
-    public static final double kRightoffset = -.192;
+    public static final double kLeftoffset = .188;
+    public static final double kRightoffset = -.194;
   }
 
 }
