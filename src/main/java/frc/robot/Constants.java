@@ -11,6 +11,10 @@ public class Constants {
   public static class Misc {
     public static final double kSlewRateLimit = 3;
     public static final double kYawSlewRateLimit = 0.1;
+
+    public static final double kHeadingP = 6;
+    public static final double kHeadingI = 0;
+    public static final double kHeadingD = .6;
   }
 
 

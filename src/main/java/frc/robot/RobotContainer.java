@@ -288,9 +288,9 @@ public class RobotContainer {
         driveJoystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         //auto gyro heading PID syom
-        headingRequest.HeadingController.setP(6);
-        headingRequest.HeadingController.setI(0);
-        headingRequest.HeadingController.setD(.8);
+        headingRequest.HeadingController.setP(Constants.Misc.kHeadingP);
+        headingRequest.HeadingController.setI(Constants.Misc.kHeadingI);
+        headingRequest.HeadingController.setD(Constants.Misc.kHeadingD);
 
         //reef SET target heading
         BbReefBottomCenter.onTrue(
