@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.List;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -13,10 +15,16 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -162,6 +170,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("DealgFlopIn", dealgaefier.FlopIn().withTimeout(Constants.Auto.kDealgFlopInOutTime));
 
         NamedCommands.registerCommand("stopCoral", coral.stopIntake().withTimeout(Constants.Auto.kCoralStopTime));
+        NamedCommands.registerCommand("stopDrive", drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0).withVelocityY(0)).withTimeout(Constants.Auto.kCoralStopTime));
   
 
         //reef heading named commands
@@ -183,6 +192,10 @@ public class RobotContainer {
                 .withTargetDirection(new Rotation2d(4 * Math.PI / 3)))
             .withTimeout(Constants.Auto.kSetHeadingTime)
         );
+
+        // most schizo named command of all time, reset odometry
+        final Command resetOdoCommand = drivetrain.runOnce(() -> drivetrain.resetPose(getSecondPose()));
+        NamedCommands.registerCommand("resetOdo", resetOdoCommand);
 
 
 
@@ -481,8 +494,40 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
     }
 
+    private Pose2d getSecondPose (){
+        List<PathPlannerPath> pathGroup;
+
+        
+        String autoFilename = getAutonomousCommand().getName();
+
+        try {
+            pathGroup = PathPlannerAuto.getPathGroupFromAutoFile(autoFilename);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(" SCHIZO ERROR (syoma) Error loading path group from auto file: " + autoFilename);
+
+            //if error will return the current pose of the robot
+            return drivetrain.getState().Pose;
+        }
+        PathPlannerPath SecondPath = pathGroup.get(1);
+
+        Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+        if (alliance == Alliance.Red){
+            SecondPath = SecondPath.flipPath();
+            
+        }
+
+        Pose2d secondPose2d = SecondPath.getStartingHolonomicPose().orElse(new Pose2d());
+
+        return secondPose2d;
+      
+    }
+
+
+
     public Command getAutonomousCommand() {
         /* Run the path selected from the auto chooser */
         return autoChooser.getSelected();
     }
+
 }
