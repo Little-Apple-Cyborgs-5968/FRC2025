@@ -11,12 +11,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "resetOdo"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -36,13 +30,19 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "stopCoral"
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.5
+                  "waitTime": 1.4
                 }
               },
               {
@@ -50,15 +50,21 @@
                 "data": {
                   "commands": [
                     {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    },
+                    {
                       "type": "named",
                       "data": {
-                        "name": "spitCoral"
+                        "name": "slowCoral"
                       }
                     },
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.2
+                        "waitTime": 0.36
                       }
                     },
                     {
@@ -77,12 +83,6 @@
           "type": "path",
           "data": {
             "pathName": "2P lH-R6"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "2PspitCoral"
           }
         }
       ]

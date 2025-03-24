@@ -12,9 +12,9 @@ public class Constants {
     public static final double kSlewRateLimit = 3;
     public static final double kYawSlewRateLimit = 0.1;
 
-    public static final double kHeadingP = 6;
+    public static final double kHeadingP = 5;
     public static final double kHeadingI = 0;
-    public static final double kHeadingD = .6;
+    public static final double kHeadingD = .4;
   }
 
 
@@ -174,8 +174,8 @@ public class Constants {
     // public static final double kXofset = .171;
     //robot centric forward backward offset (meters), bassically how far away from the tag you want to be after ur allign.
     public static final double kYofset = 0.4;
-    public static final double kLeftoffset = .188;
-    public static final double kRightoffset = -.194;
+    public static final double kLeftoffset = .19;
+    public static final double kRightoffset = -.196;
   }
 
 }
