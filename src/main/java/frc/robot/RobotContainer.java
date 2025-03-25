@@ -21,8 +21,11 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -239,6 +242,11 @@ public class RobotContainer {
             .withTargetDirection(new Rotation2d(5 * Math.PI / 3)))
             .withTimeout(Constants.Auto.k2PSetHeadingTime)
         );
+
+        NamedCommands.registerCommand("printMatchTime", drivetrain.runOnce(() -> {
+            double matchTime = Timer.getMatchTime();
+            System.out.println("Match Time: " + matchTime);
+        }));
 
     }
     
