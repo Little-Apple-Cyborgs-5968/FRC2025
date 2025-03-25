@@ -32,9 +32,11 @@ public class Constants {
       public static final double kSetHeadingTime =  2;
       public static final double kDealgFlopInOutTime = .1;
 
+      
+
 
       // 2 piece auto schizo ass timings, needa tune.
-      public static final double k2PCoralSpinTime = .8; // time in seocnds each command will run for
+      public static final double k2PCoralSpinTime = .0000001; // time in seocnds each command will run for
       public static final double k2PElevatorTime = 1.5;
       public static final double k2PLimelightAllignTime = .7;
       public static final double k2PDriveForwardTime = .5;

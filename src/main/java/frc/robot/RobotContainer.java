@@ -206,8 +206,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("2PgoToL1" ,elevator.goToElevatorStow().withTimeout(Constants.Auto.k2PElevatorTime));
         NamedCommands.registerCommand("2PspitCoral" ,coral.IntakeAutoSpeed().withTimeout(Constants.Auto.k2PCoralSpinTime));
 
-        NamedCommands.registerCommand("slowCoral" ,coral.setSpeed(.05, 0).withTimeout(Constants.Auto.k2PCoralSpinTime));
-        
+        NamedCommands.registerCommand("slowCoral" ,coral.setSpeed(.08, 0).withTimeout(Constants.Auto.k2PCoralSpinTime));
+        NamedCommands.registerCommand("reverseSlowCoral" ,coral.setSpeed(-.08, 0).withTimeout(Constants.Auto.k2PCoralSpinTime));
+
         NamedCommands.registerCommand("2PsetHeading2",drivetrain.applyRequest(() -> 
             headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
             .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)

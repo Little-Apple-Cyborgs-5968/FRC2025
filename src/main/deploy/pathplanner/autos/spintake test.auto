@@ -31,9 +31,33 @@
                 "data": {
                   "commands": [
                     {
+                      "type": "named",
+                      "data": {
+                        "name": "slowCoral"
+                      }
+                    },
+                    {
                       "type": "wait",
                       "data": {
-                        "waitTime": 3.0
+                        "waitTime": 0.3
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "reverseSlowCoral"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.6
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "stopCoral"
                       }
                     },
                     {
