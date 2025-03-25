@@ -61,6 +61,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "resetOdo"
@@ -206,7 +212,7 @@
         {
           "type": "named",
           "data": {
-            "name": "2PspitCoral"
+            "name": "spitCoral"
           }
         }
       ]
