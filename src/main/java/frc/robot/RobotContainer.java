@@ -203,7 +203,7 @@ public class RobotContainer {
 
 
         //2 piece auto schizophreinc timings
-        NamedCommands.registerCommand("2PdriveForward" ,drivetrain.applyRequest(() -> forwardStraight.withVelocityX(1).withVelocityY(0)).withTimeout(Constants.Auto.k2PDriveForwardTime));
+        NamedCommands.registerCommand("2PdriveForward" ,drivetrain.applyRequest(() -> forwardStraight.withVelocityX(.8).withVelocityY(0)).withTimeout(Constants.Auto.k2PDriveForwardTime));
         NamedCommands.registerCommand("2PgoToL4" ,elevator.goToElevatorL4().withTimeout(Constants.Auto.k2PElevatorTime));
         NamedCommands.registerCommand("2PRIGHTlimelightAlign" ,limelight.LimelightAlign(drivetrain,false).withTimeout(Constants.Auto.k2PLimelightAllignTime));
         NamedCommands.registerCommand("2PgoToL1" ,elevator.goToElevatorStow().withTimeout(Constants.Auto.k2PElevatorTime));
