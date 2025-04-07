@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.List;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -13,9 +15,19 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -40,6 +52,11 @@ import frc.robot.subsystems.LaserTest;
 
 
 public class RobotContainer {
+
+    private SlewRateLimiter xFilter = new SlewRateLimiter(Constants.Misc.kSlewRateLimit);
+    private SlewRateLimiter yFilter = new SlewRateLimiter(Constants.Misc.kSlewRateLimit);
+    private SlewRateLimiter yawFilter = new SlewRateLimiter(Constants.Misc.kYawSlewRateLimit);
+
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -129,9 +146,17 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-        
 
-//path planner named commands
+        registerPathPlannerNamedCommands();
+
+        autoChooser = AutoBuilder.buildAutoChooser("Tests");
+        SmartDashboard.putData("Auto Mode", autoChooser);
+        configureBindings();
+    }
+    
+
+    private void registerPathPlannerNamedCommands(){
+        //path planner named commands
         NamedCommands.registerCommand("LEFTlimelightAlign" ,limelight.LimelightAlign(drivetrain, true).withTimeout(Constants.Auto.kLimelightAllignTime));
         NamedCommands.registerCommand("RIGHTlimelightAlign" ,limelight.LimelightAlign(drivetrain,false).withTimeout(Constants.Auto.kLimelightAllignTime));
 
@@ -148,8 +173,12 @@ public class RobotContainer {
         NamedCommands.registerCommand("DealgFlopOut", dealgaefier.FlopOut().withTimeout(Constants.Auto.kDealgFlopInOutTime));
         NamedCommands.registerCommand("DealgFlopIn", dealgaefier.FlopIn().withTimeout(Constants.Auto.kDealgFlopInOutTime));
 
+        NamedCommands.registerCommand("stopCoral", coral.stopIntake().withTimeout(Constants.Auto.kCoralStopTime));
+        NamedCommands.registerCommand("stopDrive", drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0).withVelocityY(0)).withTimeout(Constants.Auto.kCoralStopTime));
+  
+
         //reef heading named commands
-        NamedCommands.registerCommand("setHeading3  ",drivetrain.applyRequest(() -> 
+        NamedCommands.registerCommand("setHeading3",drivetrain.applyRequest(() -> 
                 headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
                 .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
                 .withTargetDirection(new Rotation2d(2 * Math.PI / 3)))
@@ -168,11 +197,58 @@ public class RobotContainer {
             .withTimeout(Constants.Auto.kSetHeadingTime)
         );
 
- 
+        // most schizo named command of all time, reset odometry
+        final Command resetOdoCommand = drivetrain.runOnce(() -> drivetrain.resetPose(getSecondPose()));
+        NamedCommands.registerCommand("resetOdo", resetOdoCommand);
 
-        autoChooser = AutoBuilder.buildAutoChooser("Tests");
-        SmartDashboard.putData("Auto Mode", autoChooser);
-        configureBindings();
+
+
+        //2 piece auto schizophreinc timings
+        NamedCommands.registerCommand("2PdriveForward" ,drivetrain.applyRequest(() -> forwardStraight.withVelocityX(.8).withVelocityY(0)).withTimeout(Constants.Auto.k2PDriveForwardTime));
+        NamedCommands.registerCommand("2PgoToL4" ,elevator.goToElevatorL4().withTimeout(Constants.Auto.k2PElevatorTime));
+        NamedCommands.registerCommand("2PRIGHTlimelightAlign" ,limelight.LimelightAlign(drivetrain,false).withTimeout(Constants.Auto.k2PLimelightAllignTime));
+        NamedCommands.registerCommand("2PgoToL1" ,elevator.goToElevatorStow().withTimeout(Constants.Auto.k2PElevatorTime));
+        NamedCommands.registerCommand("2PspitCoral" ,coral.IntakeAutoSpeed().withTimeout(Constants.Auto.k2PCoralSpinTime));
+
+        NamedCommands.registerCommand("slowCoral" ,coral.setSpeed(.08, 0).withTimeout(Constants.Auto.k2PCoralSpinTime));
+        NamedCommands.registerCommand("reverseSlowCoral" ,coral.setSpeed(-.08, 0).withTimeout(Constants.Auto.k2PCoralSpinTime));
+
+        NamedCommands.registerCommand("2PsetHeading2",drivetrain.applyRequest(() -> 
+            headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
+            .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
+            .withTargetDirection(new Rotation2d(Math.PI / 3)))
+            .withTimeout(Constants.Auto.k2PSetHeadingTime)
+        );
+        NamedCommands.registerCommand("2PsetHeading3",drivetrain.applyRequest(() -> 
+            headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
+            .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
+            .withTargetDirection(new Rotation2d(2 * Math.PI / 3)))  
+            .withTimeout(Constants.Auto.k2PSetHeadingTime)
+        );
+        NamedCommands.registerCommand("2PsetHeading4",drivetrain.applyRequest(() -> 
+            headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
+            .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
+            .withTargetDirection(new Rotation2d(Math.PI)))
+            .withTimeout(Constants.Auto.k2PSetHeadingTime)
+        );
+        NamedCommands.registerCommand("2PsetHeading5",drivetrain.applyRequest(() -> 
+            headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
+            .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
+            .withTargetDirection(new Rotation2d(4 * Math.PI / 3)))
+            .withTimeout(Constants.Auto.k2PSetHeadingTime)
+        );
+        NamedCommands.registerCommand("2PsetHeading6",drivetrain.applyRequest(() -> 
+            headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
+            .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
+            .withTargetDirection(new Rotation2d(5 * Math.PI / 3)))
+            .withTimeout(Constants.Auto.k2PSetHeadingTime)
+        );
+
+        NamedCommands.registerCommand("printMatchTime", drivetrain.runOnce(() -> {
+            double matchTime = Timer.getMatchTime();
+            System.out.println("Match Time: " + matchTime);
+        }));
+
     }
     
     private void configureBindings() {
@@ -193,11 +269,13 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                drive.withVelocityX(xFilter.calculate(-driveJoystick.getLeftY()) * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(yFilter.calculate(-driveJoystick.getLeftX() )* MaxSpeed) // Drive left with negative X (left)
+                    //filter.calculate is a limiter to make sure the robot accelarte  too fast
                     .withRotationalRate(-driveJoystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
+        System.out.println("Left Y: " + driveJoystick.getLeftY());
 
         // robot oriented drive forwad and backward, also left right
         driveJoystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
@@ -222,9 +300,9 @@ public class RobotContainer {
         driveJoystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         //auto gyro heading PID syom
-        headingRequest.HeadingController.setP(7.0);
-        headingRequest.HeadingController.setI(0.0001);
-        headingRequest.HeadingController.setD(1.2);
+        headingRequest.HeadingController.setP(Constants.Misc.kHeadingP);
+        headingRequest.HeadingController.setI(Constants.Misc.kHeadingI);
+        headingRequest.HeadingController.setD(Constants.Misc.kHeadingD);
 
         //reef SET target heading
         BbReefBottomCenter.onTrue(
@@ -311,11 +389,11 @@ public class RobotContainer {
 
 
         // Limelight alignment
-        driveJoystick.leftBumper().onTrue(limelight.setYaw(drivetrain.getPigeon2().getYaw().getValueAsDouble()));
+        //driveJoystick.leftBumper().onTrue(limelight.setYaw(drivetrain.getPigeon2().getYaw().getValueAsDouble()));
         driveJoystick.leftBumper().whileTrue(limelight.LimelightAlign(drivetrain, true));
 
         //align to right reef branch
-        driveJoystick.rightBumper().onTrue(limelight.setYaw(drivetrain.getPigeon2().getYaw().getValueAsDouble()));
+        //driveJoystick.rightBumper().onTrue(limelight.setYaw(drivetrain.getPigeon2().getYaw().getValueAsDouble()));
         driveJoystick.rightBumper().whileTrue(limelight.LimelightAlign(drivetrain, false));
 
 
@@ -390,8 +468,8 @@ public class RobotContainer {
         operatorJoystick.start().onTrue(drivetrain.runOnce(() -> {roboOrientedInverter *=-1;}));
 
         //opp can also limelight allign
-        operatorJoystick.leftBumper().whileTrue(limelight.LimelightAlign(drivetrain, true));
-        operatorJoystick.rightBumper().whileTrue(limelight.LimelightAlign(drivetrain, false));
+        // operatorJoystick.leftBumper().whileTrue(limelight.LimelightAlign(drivetrain, true));
+        // operatorJoystick.rightBumper().whileTrue(limelight.LimelightAlign(drivetrain, false));
 
 
 
@@ -428,8 +506,40 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
     }
 
+    private Pose2d getSecondPose (){
+        List<PathPlannerPath> pathGroup;
+
+        
+        String autoFilename = getAutonomousCommand().getName();
+
+        try {
+            pathGroup = PathPlannerAuto.getPathGroupFromAutoFile(autoFilename);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(" SCHIZO ERROR (syoma) Error loading path group from auto file: " + autoFilename);
+
+            //if error will return the current pose of the robot
+            return drivetrain.getState().Pose;
+        }
+        PathPlannerPath SecondPath = pathGroup.get(1);
+
+        Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+        if (alliance == Alliance.Red){
+            SecondPath = SecondPath.flipPath();
+            
+        }
+
+        Pose2d secondPose2d = SecondPath.getStartingHolonomicPose().orElse(new Pose2d());
+
+        return secondPose2d;
+      
+    }
+
+
+
     public Command getAutonomousCommand() {
         /* Run the path selected from the auto chooser */
         return autoChooser.getSelected();
     }
+
 }

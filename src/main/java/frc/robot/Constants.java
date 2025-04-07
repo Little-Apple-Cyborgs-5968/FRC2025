@@ -6,13 +6,49 @@ package frc.robot;
 
 /** Add your docs here. */
 public class Constants {
+
+  //misclinaious constants
+  public static class Misc {
+    public static final double kSlewRateLimit = 3;
+    public static final double kYawSlewRateLimit = 0.1;
+
+    public static final double kHeadingP = 5;
+    public static final double kHeadingI = 0;
+    public static final double kHeadingD = .4;
+  }
+
+
     public static class Robot{
         public static final double k_width = 26; // Inches
         public static final double k_length = 28; // Inches
     }
 
+    public static class Auto{
+      public static final double kCoralSpinTime = 2.5; // time in seocnds each command will run for
+      public static final double kElevatorTime = .7;
+      public static final double kLimelightAllignTime = 2;
+      public static final double kDriveForwardTime = 1.2;
+      public static final double kDriveBackwardTime = .75;
+      public static final double kSetHeadingTime =  2;
+      public static final double kDealgFlopInOutTime = .1;
 
-public static class Elevator {
+      
+
+
+      // 2 piece auto schizo ass timings, needa tune.
+      public static final double k2PCoralSpinTime = .0000001; // time in seocnds each command will run for
+      public static final double k2PElevatorTime = 1.4;
+      public static final double k2PLimelightAllignTime = 1;
+      public static final double k2PDriveForwardTime = .6;
+      public static final double k2PDriveBackwardTime = .75;
+      public static final double k2PSetHeadingTime =  .15;
+
+      // coral commands change spin state , to go back to no spin  u have to run stop command.
+      public static final double kCoralStopTime = 0.001;
+        }
+
+
+    public static class Elevator {
     public static final int kElevatorLeftMotorId = 1;
     public static final int kElevatorRightMotorId = 2;
     //Whatever controller we decide to plug the beambreak into- make sure forward limit switch is disabled
@@ -142,18 +178,8 @@ public static class Elevator {
     // public static final double kXofset = .171;
     //robot centric forward backward offset (meters), bassically how far away from the tag you want to be after ur allign.
     public static final double kYofset = 0.4;
-    public static final double kLeftoffset = .15;
+    public static final double kLeftoffset = .182;
     public static final double kRightoffset = -.196;
-  }
-
-  public static class Auto{
-    public static final double kCoralSpinTime = 2.5; // time in seocnds each command will run for
-    public static final double kElevatorTime = .7;
-    public static final double kLimelightAllignTime = 2;
-    public static final double kDriveForwardTime = 1.2;
-    public static final double kDriveBackwardTime = .75;
-    public static final double kSetHeadingTime =  2;
-    public static final double kDealgFlopInOutTime = .1;
   }
 
 }
