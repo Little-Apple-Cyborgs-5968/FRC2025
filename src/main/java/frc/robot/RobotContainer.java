@@ -396,6 +396,8 @@ public class RobotContainer {
         //driveJoystick.rightBumper().onTrue(limelight.setYaw(drivetrain.getPigeon2().getYaw().getValueAsDouble()));
         driveJoystick.rightBumper().whileTrue(limelight.LimelightAlign(drivetrain, false));
 
+        driveJoystick.start().whileTrue(limelight.LimelightAlignWithHeading(drivetrain, false, 0));
+
 
 /*---------------------------------- operator joystick and button board stuff----------------------------------*/
         

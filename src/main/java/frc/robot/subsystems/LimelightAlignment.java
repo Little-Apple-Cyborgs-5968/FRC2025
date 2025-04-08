@@ -56,6 +56,36 @@ public class LimelightAlignment extends SubsystemBase {
     return run(() -> yawControl.setSetpoint(yaw));
   }
 
+  public Command LimelightAlignWithHeading(CommandSwerveDrivetrain drivetrain, boolean left, double heading){
+    return run(() -> this.driveAtTagWithHeading(drivetrain, left, heading));
+  }
+
+  private void driveAtTagWithHeading(CommandSwerveDrivetrain driveT, boolean left, double heading){
+    Pose3d cameraPose_TargetSpace = LimelightHelpers.getCameraPose3d_TargetSpace("");
+    yawControl.setTolerance(0.05);
+    yawControl.enableContinuousInput(-180, 180);
+
+    double xOffset = Constants.LimelightAlignment.kRightoffset;
+    if(left)
+    {
+      xOffset = Constants.LimelightAlignment.kLeftoffset;
+    }
+    if (cameraPose_TargetSpace.getX() != 0 && cameraPose_TargetSpace.getY() != 0)
+    {
+      ySpeed = kiy * (cameraPose_TargetSpace.getX() + xOffset);
+      xSpeed = -kix * (cameraPose_TargetSpace.getZ() + Constants.LimelightAlignment.kYofset);
+    }
+    else
+    {
+      System.out.println("can't see apriltag");
+      ySpeed = 0;
+      xSpeed = 0;
+    }
+
+    double yawSpeed = (driveT.getPigeon2().getYaw().getValueAsDouble() - heading) * Constants.LimelightAlignment.kiYaw;
+    driveT.setControl(new SwerveRequest.RobotCentric().withVelocityX(xSpeed).withVelocityY(ySpeed).withRotationalRate(yawSpeed));
+  }
+
   // George Code
   private void driveAtTag(CommandSwerveDrivetrain driveT, boolean left){
       Pose3d cameraPose_TargetSpace = LimelightHelpers.getCameraPose3d_TargetSpace(""); // Camera's pose relative to tag (should use Robot's pose in the future)

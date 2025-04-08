@@ -180,6 +180,7 @@ public class Constants {
     public static final double kYofset = 0.4;
     public static final double kLeftoffset = .182;
     public static final double kRightoffset = -.196;
+    public static final double kiYaw = 0.01;
   }
 
 }
