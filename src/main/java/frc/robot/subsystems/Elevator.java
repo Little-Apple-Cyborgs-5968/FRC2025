@@ -44,8 +44,8 @@ public class Elevator extends SubsystemBase {
 
   private SparkMax mRightMotor;
 
-  private SparkMax beamBreakController;
-  private SparkLimitSwitch beamBreak;
+  // private SparkMax beamBreakController;
+  // private SparkLimitSwitch beamBreak;
 
   private TrapezoidProfile mProfile;
   private TrapezoidProfile.State mCurState = new TrapezoidProfile.State();
@@ -89,8 +89,8 @@ public class Elevator extends SubsystemBase {
             Constants.Elevator.kMaxVelocity,
             Constants.Elevator.kMaxAcceleration));
     
-    beamBreakController = new SparkMax(Constants.Elevator.kBeamBreakId, MotorType.kBrushless);
-    beamBreak = beamBreakController.getForwardLimitSwitch();
+    //beamBreakController = new SparkMax(Constants.Elevator.kBeamBreakId, MotorType.kBrushless);
+    // beamBreak = beamBreakController.getForwardLimitSwitch();
 
     
   }
