@@ -343,10 +343,7 @@ public class RobotContainer {
         );
         //intake station APPLY target heading
         driveJoystick.leftTrigger().whileTrue(
-            drivetrain.applyRequest(() -> 
-            headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
-                .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
-                .withTargetDirection(new Rotation2d(targetHeadingIntake)))
+            limelight.LimelightAlignWithHeading(drivetrain, false, 0)
         );
 
         //left trigger also go to fetal position (resests everythig to be compact)

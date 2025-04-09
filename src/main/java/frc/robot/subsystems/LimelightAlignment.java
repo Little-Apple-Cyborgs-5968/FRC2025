@@ -4,12 +4,16 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.*;
+
 import java.io.ObjectInputFilter.Config;
 import java.security.PublicKey;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,6 +23,7 @@ import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.generated.TunerConstants;
@@ -27,8 +32,22 @@ import frc.robot.Constants;
 
 public class LimelightAlignment extends SubsystemBase {
 
+  private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+
+  double toApplyOmega = 0.0;
+   double timeStamp = 0.01; // 10ms
+
   //private CommandSwerveDrivetrain drivetrain  = TunerConstants.createDrivetrain();
   private final SwerveRequest.RobotCentric robotCentricRequest = new SwerveRequest.RobotCentric();
+
+
+  private final SwerveRequest.RobotCentricFacingAngle headingRequest = new SwerveRequest.RobotCentricFacingAngle()
+            .withDeadband(MaxSpeed * 0.05) // Add a 3% deadband to translation
+            .withDriveRequestType(DriveRequestType.Velocity)
+            .withSteerRequestType(SteerRequestType.MotionMagicExpo)
+    ;
+
+
   private Boolean run = false;
 
   //PID bad for Limelight don't use
@@ -77,13 +96,24 @@ public class LimelightAlignment extends SubsystemBase {
     }
     else
     {
-      System.out.println("can't see apriltag");
       ySpeed = 0;
       xSpeed = 0;
     }
 
-    double yawSpeed = (driveT.getPigeon2().getYaw().getValueAsDouble() - heading) * Constants.LimelightAlignment.kiYaw;
-    driveT.setControl(new SwerveRequest.RobotCentric().withVelocityX(xSpeed).withVelocityY(ySpeed).withRotationalRate(yawSpeed));
+    // driveT.applyRequest(() -> 
+    // headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
+    //     .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
+    //     .withTargetDirection(new Rotation2d(targetHeadingReef)));
+
+    //double yawSpeed = (driveT.getPigeon2().getYaw().getValueAsDouble() - heading) * Constants.LimelightAlignment.kiYaw;
+
+    headingRequest.HeadingController.setP(Constants.Misc.kHeadingP);
+    headingRequest.HeadingController.setI(Constants.Misc.kHeadingI);
+    headingRequest.HeadingController.setD(Constants.Misc.kHeadingD);
+
+    // driveT.setControl(new SwerveRequest.RobotCentric().withVelocityX(xSpeed).withVelocityY(ySpeed).withRotationalRate(yawSpeed));
+    driveT.setControl(headingRequest.withVelocityX(xSpeed).withVelocityY(ySpeed).withTargetDirection(new Rotation2d(heading)));
+
   }
 
   // George Code
@@ -116,7 +146,6 @@ public class LimelightAlignment extends SubsystemBase {
       }
       else
       {
-        System.out.println("can't see apriltag");
         ySpeed = 0;
         xSpeed = 0;
       }
