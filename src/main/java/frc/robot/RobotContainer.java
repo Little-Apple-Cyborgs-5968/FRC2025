@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.lang.annotation.Target;
 import java.util.List;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -336,15 +337,24 @@ public class RobotContainer {
 
         //reef APPLY target heading
         driveJoystick.rightTrigger().whileTrue(
+            limelight.LimelightAlignWithHeading(drivetrain, limelight.AllignLeft, targetHeadingReef) // align to reef
+
+        );
+        //intake station APPLY target heading
+        driveJoystick.leftTrigger().whileTrue(
             drivetrain.applyRequest(() -> 
             headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
                 .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
                 .withTargetDirection(new Rotation2d(targetHeadingReef)))
         );
-        //intake station APPLY target heading
-        driveJoystick.leftTrigger().whileTrue(
-            limelight.LimelightAlignWithHeading(drivetrain, false, 0)
-        );
+
+        // Limelight alignment
+        driveJoystick.leftBumper().whileTrue(limelight.LimelightAlign(drivetrain, true));
+
+        //align to right reef branch
+        driveJoystick.rightBumper().whileTrue(limelight.LimelightAlign(drivetrain, false));
+
+
 
         //left trigger also go to fetal position (resests everythig to be compact)
         driveJoystick.leftTrigger().whileTrue(
@@ -384,13 +394,7 @@ public class RobotContainer {
         );
 
 
-        // Limelight alignment
-        //driveJoystick.leftBumper().onTrue(limelight.setYaw(drivetrain.getPigeon2().getYaw().getValueAsDouble()));
-        driveJoystick.leftBumper().whileTrue(limelight.LimelightAlign(drivetrain, true));
 
-        //align to right reef branch
-        //driveJoystick.rightBumper().onTrue(limelight.setYaw(drivetrain.getPigeon2().getYaw().getValueAsDouble()));
-        driveJoystick.rightBumper().whileTrue(limelight.LimelightAlign(drivetrain, false));
 
         driveJoystick.start().whileTrue(limelight.LimelightAlignWithHeading(drivetrain, false, 0));
 

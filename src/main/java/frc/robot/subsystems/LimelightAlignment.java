@@ -59,13 +59,9 @@ public class LimelightAlignment extends SubsystemBase {
 
   double ySpeed = 0;
   double xSpeed = 0;
-  
 
-  private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-
-  /** Creates a new LimelightAlignment. */
-  public LimelightAlignment() {}
+  public boolean AllignLeft = true;
+  public boolean CurrentlyAlligning = false;
 
   public Command LimelightAlign(CommandSwerveDrivetrain drivetrain, boolean left){
     return run(() -> this.driveAtTag(drivetrain, left));
@@ -100,45 +96,32 @@ public class LimelightAlignment extends SubsystemBase {
       xSpeed = 0;
     }
 
-    // driveT.applyRequest(() -> 
-    // headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
-    //     .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
-    //     .withTargetDirection(new Rotation2d(targetHeadingReef)));
-
-    //double yawSpeed = (driveT.getPigeon2().getYaw().getValueAsDouble() - heading) * Constants.LimelightAlignment.kiYaw;
-
     headingRequest.HeadingController.setP(Constants.Misc.kHeadingP);
     headingRequest.HeadingController.setI(Constants.Misc.kHeadingI);
     headingRequest.HeadingController.setD(Constants.Misc.kHeadingD);
 
-    // driveT.setControl(new SwerveRequest.RobotCentric().withVelocityX(xSpeed).withVelocityY(ySpeed).withRotationalRate(yawSpeed));
     driveT.setControl(headingRequest.withVelocityX(xSpeed).withVelocityY(ySpeed).withTargetDirection(new Rotation2d(heading)));
 
   }
 
   // George Code
   private void driveAtTag(CommandSwerveDrivetrain driveT, boolean left){
+      CurrentlyAlligning = true;
       Pose3d cameraPose_TargetSpace = LimelightHelpers.getCameraPose3d_TargetSpace(""); // Camera's pose relative to tag (should use Robot's pose in the future)
-   
-      // when basing speed off offsets lets add an extra proportional term for each of these
-      // lets not edit the yaw
-      //double xPos = -0.16501350439035187;
-      //double yPos = -0.08830078668779259;
-
-      //xControl.setSetpoint(0);
-      //zControl.setSetpoint(1);
-      //xControl.setTolerance(0.05);
-      //zControl.setTolerance(0.05);
-  
       yawControl.setTolerance(0.05);
       yawControl.enableContinuousInput(-180, 180);
 
-      // when lime light is not seeing the target, it will return 0 for x and y
-      // if x and y are 0, then we should not move
+      
       double xOffset = Constants.LimelightAlignment.kRightoffset;
+      //public bolean to keep track of which side we allign to
+      AllignLeft = false;
       if(left){
         xOffset = Constants.LimelightAlignment.kLeftoffset;
+        //public boolean
+        AllignLeft = true;
       }
+      // when lime light is not seeing the target, it will return 0 for x and y
+      // if x and y are 0, then we should not move
       if (cameraPose_TargetSpace.getX() != 0 && cameraPose_TargetSpace.getY() != 0)
       {
         ySpeed = kiy * (cameraPose_TargetSpace.getX() + xOffset);
@@ -149,26 +132,22 @@ public class LimelightAlignment extends SubsystemBase {
         ySpeed = 0;
         xSpeed = 0;
       }
-
-      // System.out.println("Z: " + cameraPose_TargetSpace.getZ());
-      // double yawSpeed = -yawControl.calculate(driveT.getPigeon2().getYaw().getValueAsDouble())  * 0.01;
-      // if(yawSpeed < 0.05){
-      //   yawSpeed = 0;
-      // }
-      
-      //driveT.applyRequest(() ->
-      //  robotCentricRequest.withVelocityX(xSpeed).withVelocityY(ySpeed)
-      //);
-
-      // if tx or ty is not 0, then move
       
       driveT.setControl(new SwerveRequest.RobotCentric().withVelocityX(xSpeed).withVelocityY(ySpeed).withRotationalRate(0));
-      
-      
+  }
+
+  public Command idleCommand(){
+    return run(() -> this.idle());
+  }
+
+  private void idle(){
+    CurrentlyAlligning = false;
   }
 
   @Override
   public void periodic() {
+
+    System.out.println(AllignLeft);
     // Basic targeting data
     double tx = LimelightHelpers.getTX("");  // Horizontal offset from crosshair to target in degrees
     double ty = LimelightHelpers.getTY("");  // Vertical offset from crosshair to target in degrees
