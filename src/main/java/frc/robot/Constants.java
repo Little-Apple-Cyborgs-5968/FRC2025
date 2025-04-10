@@ -38,8 +38,8 @@ public class Constants {
       // 2 piece auto schizo ass timings, needa tune.
       public static final double k2PCoralSpinTime = .0000001; // time in seocnds each command will run for
       public static final double k2PElevatorTime = 1.4;
-      public static final double k2PLimelightAllignTime = 1;
-      public static final double k2PDriveForwardTime = .6;
+      public static final double k2PLimelightAllignTime = 1.5;
+      public static final double k2PDriveForwardTime = .9;
       public static final double k2PDriveBackwardTime = .75;
       public static final double k2PSetHeadingTime =  .15;
 

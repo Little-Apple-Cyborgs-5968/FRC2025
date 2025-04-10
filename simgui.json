@@ -44,7 +44,6 @@
     "windows": {
       "/Pose": {
         "bottom": 1638,
-        "builtin": "2025 Reefscape",
         "height": 8.051901817321777,
         "left": 534,
         "right": 3466,
@@ -93,7 +92,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 302,
+          "height": 0,
           "series": [
             {
               "color": [
@@ -135,7 +134,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 0,
+          "height": 326,
           "series": [
             {
               "color": [

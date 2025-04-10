@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.io.Console;
 import java.io.ObjectInputFilter.Config;
 import java.security.PublicKey;
 
@@ -72,10 +73,12 @@ public class LimelightAlignment extends SubsystemBase {
   }
 
   public Command LimelightAlignWithHeading(CommandSwerveDrivetrain drivetrain, boolean left, double heading){
+    System.out.println(heading);
     return run(() -> this.driveAtTagWithHeading(drivetrain, left, heading));
+  
   }
 
-  private void driveAtTagWithHeading(CommandSwerveDrivetrain driveT, boolean left, double heading){
+  private void driveAtTagWithHeading(CommandSwerveDrivetrain driveT, boolean left, double h){
     Pose3d cameraPose_TargetSpace = LimelightHelpers.getCameraPose3d_TargetSpace("");
     yawControl.setTolerance(0.05);
     yawControl.enableContinuousInput(-180, 180);
@@ -100,7 +103,9 @@ public class LimelightAlignment extends SubsystemBase {
     headingRequest.HeadingController.setI(Constants.Misc.kHeadingI);
     headingRequest.HeadingController.setD(Constants.Misc.kHeadingD);
 
-    driveT.setControl(headingRequest.withVelocityX(xSpeed).withVelocityY(ySpeed).withTargetDirection(new Rotation2d(heading)));
+    driveT.setControl(headingRequest.withVelocityX(xSpeed).withVelocityY(ySpeed).withTargetDirection(new Rotation2d(h)));
+
+    System.out.println(h);
 
   }
 
@@ -147,7 +152,7 @@ public class LimelightAlignment extends SubsystemBase {
   @Override
   public void periodic() {
 
-    System.out.println(AllignLeft);
+    
     // Basic targeting data
     double tx = LimelightHelpers.getTX("");  // Horizontal offset from crosshair to target in degrees
     double ty = LimelightHelpers.getTY("");  // Vertical offset from crosshair to target in degrees

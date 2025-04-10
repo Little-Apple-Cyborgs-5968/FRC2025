@@ -337,15 +337,19 @@ public class RobotContainer {
 
         //reef APPLY target heading
         driveJoystick.rightTrigger().whileTrue(
-            limelight.LimelightAlignWithHeading(drivetrain, limelight.AllignLeft, targetHeadingReef) // align to reef
-
+            drivetrain.applyRequest(() -> 
+            headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
+                .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
+                .withTargetDirection(new Rotation2d(targetHeadingReef)))
         );
+
+        
         //intake station APPLY target heading
         driveJoystick.leftTrigger().whileTrue(
             drivetrain.applyRequest(() -> 
             headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
                 .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
-                .withTargetDirection(new Rotation2d(targetHeadingReef)))
+                .withTargetDirection(new Rotation2d(targetHeadingIntake)))
         );
 
         // Limelight alignment

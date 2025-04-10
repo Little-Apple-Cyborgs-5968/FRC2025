@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R4;postallignscore"
+            "pathName": "weeLilback"
           }
         },
         {
@@ -23,13 +23,19 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 4.0
+                  "waitTime": 1.45
                 }
               },
               {
                 "type": "sequential",
                 "data": {
                   "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.2
+                      }
+                    },
                     {
                       "type": "named",
                       "data": {

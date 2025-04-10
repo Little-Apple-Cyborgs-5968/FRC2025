@@ -92,19 +92,25 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.4
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.4
-                }
-              },
-              {
                 "type": "sequential",
                 "data": {
                   "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.2
+                      }
+                    },
                     {
                       "type": "named",
                       "data": {
@@ -155,14 +161,14 @@
                     }
                   ]
                 }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "2P lH-R6"
+                }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "2P lH-R6"
           }
         },
         {
