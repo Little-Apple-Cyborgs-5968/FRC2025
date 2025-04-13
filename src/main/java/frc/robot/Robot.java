@@ -18,6 +18,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.HttpCamera;
+import frc.robot.subsystems.LimelightAlignment;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -59,6 +60,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("voltage", voltage);
     SmartDashboard.putData("Field", m_field);
     SmartDashboard.putBoolean("Targeting", LimelightHelpers.getTV(""));
+    SmartDashboard.putNumber("TargetX", LimelightAlignment.ApriltagBasedOrientation);
     m_field.setRobotPose(LimelightHelpers.getBotPose2d("null"));
     }
 

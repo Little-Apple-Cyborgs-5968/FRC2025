@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.*;
 
 import java.lang.annotation.Target;
 import java.util.List;
+import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
@@ -62,6 +63,7 @@ public class RobotContainer {
 
     //syom auto heading
     private double targetHeadingReef = 0; // in radians
+    private DoubleSupplier targetHeadingReefSupplier = () -> targetHeadingReef;
     private double targetHeadingIntake = 2.2 +Math.PI;
 
     //multipleis the pov robot oriented to invert which side if front (only robot oriented, feild centric front should stay the same throughout the match)
@@ -337,10 +339,7 @@ public class RobotContainer {
 
         //reef APPLY target heading
         driveJoystick.rightTrigger().whileTrue(
-            drivetrain.applyRequest(() -> 
-            headingRequest.withVelocityX(-driveJoystick.getLeftY() * MaxSpeed)
-                .withVelocityY(-driveJoystick.getLeftX() * MaxSpeed)
-                .withTargetDirection(new Rotation2d(targetHeadingReef)))
+            limelight.LimelightAlignWithHeading(drivetrain, true, targetHeadingReefSupplier)
         );
 
         
@@ -400,7 +399,7 @@ public class RobotContainer {
 
 
 
-        driveJoystick.start().whileTrue(limelight.LimelightAlignWithHeading(drivetrain, false, 0));
+  
 
 
 /*---------------------------------- operator joystick and button board stuff----------------------------------*/

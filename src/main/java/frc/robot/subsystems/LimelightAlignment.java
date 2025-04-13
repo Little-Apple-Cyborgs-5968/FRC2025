@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import java.io.Console;
 import java.io.ObjectInputFilter.Config;
 import java.security.PublicKey;
+import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
@@ -72,9 +73,9 @@ public class LimelightAlignment extends SubsystemBase {
     return run(() -> yawControl.setSetpoint(yaw));
   }
 
-  public Command LimelightAlignWithHeading(CommandSwerveDrivetrain drivetrain, boolean left, double heading){
+  public Command LimelightAlignWithHeading(CommandSwerveDrivetrain drivetrain, boolean left, DoubleSupplier heading){
     System.out.println(heading);
-    return run(() -> this.driveAtTagWithHeading(drivetrain, left, heading));
+    return run(() -> this.driveAtTagWithHeading(drivetrain, left, heading.getAsDouble()));
   
   }
 
@@ -115,6 +116,7 @@ public class LimelightAlignment extends SubsystemBase {
       Pose3d cameraPose_TargetSpace = LimelightHelpers.getCameraPose3d_TargetSpace(""); // Camera's pose relative to tag (should use Robot's pose in the future)
       yawControl.setTolerance(0.05);
       yawControl.enableContinuousInput(-180, 180);
+      
 
       
       double xOffset = Constants.LimelightAlignment.kRightoffset;
@@ -141,7 +143,26 @@ public class LimelightAlignment extends SubsystemBase {
       driveT.setControl(new SwerveRequest.RobotCentric().withVelocityX(xSpeed).withVelocityY(ySpeed).withRotationalRate(0));
   }
 
-  public Command idleCommand(){
+  public Command getAprilTagHeading(){
+    return run(() -> this.aprilTagheading());
+  }
+
+  double tagID = LimelightHelpers.getFiducialID("");
+  public static double ApriltagBasedOrientation = 0;
+
+  private void aprilTagheading() {
+    ApriltagBasedOrientation = switch ((int) tagID) {
+      case 18, 7 -> 1;
+      case 17,8 -> 2;
+      case 22,9 -> 3;
+      case 21,10 -> 4;
+      case 20,11 -> 5;
+      case 19,12 -> 6;
+      default -> 1;
+    };
+  }
+
+  public Command idleCommand() {
     return run(() -> this.idle());
   }
 
