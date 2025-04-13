@@ -19,6 +19,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.PPLibTelemetry;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -65,6 +66,7 @@ public class RobotContainer {
     private double targetHeadingReef = 0; // in radians
     private DoubleSupplier targetHeadingReefSupplier = () -> targetHeadingReef;
     private double targetHeadingIntake = 2.2 +Math.PI;
+    private DoubleSupplier AprilTagHeadingSupplier = () -> LimelightAlignment.ApriltagBasedOrientation;
 
     //multipleis the pov robot oriented to invert which side if front (only robot oriented, feild centric front should stay the same throughout the match)
     //should always be 1 or -1
@@ -121,7 +123,7 @@ public class RobotContainer {
     private final JoystickButton BbIntakeR = new JoystickButton(buttonBoard, 8);
     private final JoystickButton BbAlgaeProcessor = new JoystickButton(buttonBoard, 9);
 
-    private final JoystickButton BbCoral1 = new JoystickButton(buttonBoard, 10);
+    private final JoystickButton BbMasonReplacer = new JoystickButton(buttonBoard, 10);
     private final JoystickButton BbCoral2 = new JoystickButton(buttonBoard, 11);
     private final JoystickButton BbCoral3 = new JoystickButton(buttonBoard, 12);
      
@@ -325,6 +327,13 @@ public class RobotContainer {
         BbReefBottomLeft.onTrue(
             drivetrain.runOnce(() -> targetHeadingReef = 5 * Math.PI / 3) // close left
         );
+
+        //reef SET target heading for mason replacer
+        BbMasonReplacer.onTrue(
+            drivetrain.runOnce(() -> targetHeadingReef = (AprilTagHeadingSupplier.getAsDouble()-1)*Math.PI/3) // close
+        );
+
+        
 
         //intake station SET target heading
         BbIntakeL.onTrue(

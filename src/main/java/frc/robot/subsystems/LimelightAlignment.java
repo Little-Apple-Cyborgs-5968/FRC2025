@@ -65,20 +65,74 @@ public class LimelightAlignment extends SubsystemBase {
   public boolean AllignLeft = true;
   public boolean CurrentlyAlligning = false;
 
+  /**
+   * represent which reef (1 through 6 like on BBboard) april tag the limelight is seeing 
+   */
+  public static double ApriltagBasedOrientation = 1;
+
+  double tagID = LimelightHelpers.getFiducialID("");
+  
+
+  
+  
+
+  /**
+   * Creates a command to align the robot using the Limelight camera.
+   *
+   * @param drivetrain The swerve drivetrain subsystem used to control the robot's movement.
+   * @param left A boolean indicating whether to align to the left side of the target.
+   * @return A command that runs the alignment logic.
+   */
   public Command LimelightAlign(CommandSwerveDrivetrain drivetrain, boolean left){
     return run(() -> this.driveAtTag(drivetrain, left));
   }
-  
-  public Command setYaw(double yaw){
-    return run(() -> yawControl.setSetpoint(yaw));
-  }
 
+
+  /**
+   * Creates a command to align the robot using the Limelight while maintaining a specified heading.
+   *
+   * @param drivetrain The swerve drivetrain subsystem used to control the robot's movement.
+   * @param left A boolean indicating whether to align to the left or right of the target.
+   * @param heading A {@link DoubleSupplier} that provides the desired heading angle in radians.
+   * @return A {@link Command} that aligns the robot to the target while maintaining the specified heading.
+   */
   public Command LimelightAlignWithHeading(CommandSwerveDrivetrain drivetrain, boolean left, DoubleSupplier heading){
     System.out.println(heading);
     return run(() -> this.driveAtTagWithHeading(drivetrain, left, heading.getAsDouble()));
   
   }
 
+  private void driveAtTag(CommandSwerveDrivetrain driveT, boolean left){
+    CurrentlyAlligning = true;
+    Pose3d cameraPose_TargetSpace = LimelightHelpers.getCameraPose3d_TargetSpace(""); // Camera's pose relative to tag (should use Robot's pose in the future)
+    yawControl.setTolerance(0.05);
+    yawControl.enableContinuousInput(-180, 180);
+    
+
+    
+    double xOffset = Constants.LimelightAlignment.kRightoffset;
+    //public bolean to keep track of which side we allign to
+    AllignLeft = false;
+    if(left){
+      xOffset = Constants.LimelightAlignment.kLeftoffset;
+      //public boolean
+      AllignLeft = true;
+    }
+    // when lime light is not seeing the target, it will return 0 for x and y
+    // if x and y are 0, then we should not move
+    if (cameraPose_TargetSpace.getX() != 0 && cameraPose_TargetSpace.getY() != 0)
+    {
+      ySpeed = kiy * (cameraPose_TargetSpace.getX() + xOffset);
+      xSpeed = -kix * (cameraPose_TargetSpace.getZ() + Constants.LimelightAlignment.kYofset);
+    }
+    else
+    {
+      ySpeed = 0;
+      xSpeed = 0;
+    }
+    
+    driveT.setControl(new SwerveRequest.RobotCentric().withVelocityX(xSpeed).withVelocityY(ySpeed).withRotationalRate(0));
+}
   private void driveAtTagWithHeading(CommandSwerveDrivetrain driveT, boolean left, double h){
     Pose3d cameraPose_TargetSpace = LimelightHelpers.getCameraPose3d_TargetSpace("");
     yawControl.setTolerance(0.05);
@@ -110,56 +164,17 @@ public class LimelightAlignment extends SubsystemBase {
 
   }
 
-  // George Code
-  private void driveAtTag(CommandSwerveDrivetrain driveT, boolean left){
-      CurrentlyAlligning = true;
-      Pose3d cameraPose_TargetSpace = LimelightHelpers.getCameraPose3d_TargetSpace(""); // Camera's pose relative to tag (should use Robot's pose in the future)
-      yawControl.setTolerance(0.05);
-      yawControl.enableContinuousInput(-180, 180);
-      
-
-      
-      double xOffset = Constants.LimelightAlignment.kRightoffset;
-      //public bolean to keep track of which side we allign to
-      AllignLeft = false;
-      if(left){
-        xOffset = Constants.LimelightAlignment.kLeftoffset;
-        //public boolean
-        AllignLeft = true;
-      }
-      // when lime light is not seeing the target, it will return 0 for x and y
-      // if x and y are 0, then we should not move
-      if (cameraPose_TargetSpace.getX() != 0 && cameraPose_TargetSpace.getY() != 0)
-      {
-        ySpeed = kiy * (cameraPose_TargetSpace.getX() + xOffset);
-        xSpeed = -kix * (cameraPose_TargetSpace.getZ() + Constants.LimelightAlignment.kYofset);
-      }
-      else
-      {
-        ySpeed = 0;
-        xSpeed = 0;
-      }
-      
-      driveT.setControl(new SwerveRequest.RobotCentric().withVelocityX(xSpeed).withVelocityY(ySpeed).withRotationalRate(0));
-  }
+  
 
   public Command getAprilTagHeading(){
     return run(() -> this.aprilTagheading());
   }
 
-  double tagID = LimelightHelpers.getFiducialID("");
-  public static double ApriltagBasedOrientation = 0;
+  
+ 
 
   private void aprilTagheading() {
-    ApriltagBasedOrientation = switch ((int) tagID) {
-      case 18, 7 -> 1;
-      case 17,8 -> 2;
-      case 22,9 -> 3;
-      case 21,10 -> 4;
-      case 20,11 -> 5;
-      case 19,12 -> 6;
-      default -> 1;
-    };
+
   }
 
   public Command idleCommand() {
@@ -172,6 +187,17 @@ public class LimelightAlignment extends SubsystemBase {
 
   @Override
   public void periodic() {
+    tagID = LimelightHelpers.getFiducialID("");
+
+    ApriltagBasedOrientation = switch ((int) tagID) {
+      case 18, 7 -> 1;
+      case 17,8 -> 2;
+      case 22,9 -> 3;
+      case 21,10 -> 4;
+      case 20,11 -> 5;
+      case 19,12 -> 6;
+      default -> 1;
+    };
 
     
     // Basic targeting data
