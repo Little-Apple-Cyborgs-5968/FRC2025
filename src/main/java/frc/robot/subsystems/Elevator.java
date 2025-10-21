@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import com.ctre.phoenix6.hardware.CANrange;
 //sketch import i added 
 
 public class Elevator extends SubsystemBase {
@@ -41,6 +42,8 @@ public class Elevator extends SubsystemBase {
   private SparkMax mLeftMotor;
   private RelativeEncoder mLeftEncoder;
   private SparkClosedLoopController mLeftPIDController;
+
+  private CANrange mCANRange;
 
   private SparkMax mRightMotor;
 
@@ -84,6 +87,9 @@ public class Elevator extends SubsystemBase {
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
+    // Initialize CAN range
+    mCANRange = new CANrange(Constants.Elevator.kCANRangeId);
+
     mProfile = new TrapezoidProfile(
         new TrapezoidProfile.Constraints(
             Constants.Elevator.kMaxVelocity,
@@ -120,6 +126,11 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    //can range stuff
+    System.out.println("CAN range device id : " + mCANRange.getDeviceID());
+    System.out.println("CAN range distance : " + mCANRange.getDistance(true));
+    
+
     //periodically updates the elveator motors to turn to correct position based of what mPeriodicIO.elevator_target is set. syom
 
     //theres a bunch of publci function  to change elevator level, e.g 
