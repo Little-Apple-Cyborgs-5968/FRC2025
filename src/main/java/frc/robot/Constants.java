@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Meter;
+
+import edu.wpi.first.units.measure.Distance;
+
 /** Add your docs here. */
 public class Constants {
 
@@ -52,6 +56,7 @@ public class Constants {
     public static final int kElevatorLeftMotorId = 1;
     public static final int kElevatorRightMotorId = 2;
     public static final int kCANRangeId = 0;
+    public static final double kCANUnsafeRange = (4 * Math.pow(10, -2));
     //Whatever controller we decide to plug the beambreak into- make sure forward limit switch is disabled
     // public static final int kBeamBreakId = 4;
 

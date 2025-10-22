@@ -14,6 +14,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -44,7 +45,7 @@ public class Elevator extends SubsystemBase {
   private SparkClosedLoopController mLeftPIDController;
 
   private CANrange mCANRange;
-
+  private boolean mCANUnsafe;
   private SparkMax mRightMotor;
 
   // private SparkMax beamBreakController;
@@ -126,10 +127,24 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //can range stuff
-    System.out.println("CAN range device id : " + mCANRange.getDeviceID());
-    System.out.println("CAN range distance : " + mCANRange.getDistance(true));
-    
+    // CAN range functionality
+    System.out.println("CAN range distance: " + mCANRange.getDistance(true));
+    Double canRangeDistance = mCANRange.getDistance(true).getValueAsDouble();
+    if (canRangeDistance < Constants.Elevator.kCANUnsafeRange) {
+      System.out.println("ALERT!! Coral is too far in!! UNSAFE!!!");
+      mCANUnsafe = true;
+    } else {
+      mCANUnsafe = false;
+    }
+
+    // canRange.
+    // Distance canRange = mCANRange.getDistance(true).getValue();
+    // if (canRange.compareToco(kCANUnsafeRange)) {
+    //   System.out.println("ALERT!! Coral is too far in!! UNSAFE!!!");
+    //   mCANUnsafe = true;
+    // } else {
+    //   mCANUnsafe = false;
+    // }
 
     //periodically updates the elveator motors to turn to correct position based of what mPeriodicIO.elevator_target is set. syom
 
